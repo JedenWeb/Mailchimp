@@ -118,6 +118,7 @@ class Mailchimp
 	{
 		$request = new Request($this->url.$endpoint);
 		$request->setSender($this->sender);
+		$request->headers['Authorization'] = 'apikey '. $this->apiKey;
 		return $request;
 	}
 
