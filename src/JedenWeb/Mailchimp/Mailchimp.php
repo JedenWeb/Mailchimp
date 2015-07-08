@@ -2,6 +2,7 @@
 
 namespace JedenWeb\Mailchimp;
 
+use Kdyby\Curl\BadStatusException;
 use Kdyby\Curl\CurlException;
 use Kdyby\Curl\CurlSender;
 use Kdyby\Curl\Request;
@@ -72,7 +73,7 @@ class Mailchimp
 	{
 		$response = $this->call(Request::GET, "/lists/$this->listId/members/".md5($email));
 
-		if ($response->getCode() === 404) {
+		if (!$response || $response->getCode() === 404) {
 			return FALSE;
 		}
 
@@ -101,8 +102,16 @@ class Mailchimp
 				$response = $request->send();
 			}
 		} catch (CurlException $e) {
-			Debugger::log($e);
-			return NULL;
+			if ($e instanceof BadStatusException) {
+				$response = $e->getResponse();
+
+				if ($response->getCode() !== 404) {
+					Debugger::log($e);
+					return;
+				}
+			} else {
+				throw $e;
+			}
 		}
 
 		return $response;
