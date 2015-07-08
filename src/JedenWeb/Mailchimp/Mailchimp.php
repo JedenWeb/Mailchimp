@@ -91,7 +91,6 @@ class Mailchimp
 	private function call($method, $endpoint, $data = [])
 	{
 		$request = $this->createRequest($endpoint);
-		$data = Json::encode($data);
 
 		try {
 			if ($method === Request::GET) {
@@ -110,6 +109,8 @@ class Mailchimp
 					Debugger::log($e);
 					return;
 				}
+			} else {
+				throw $e;
 			}
 		}
 
