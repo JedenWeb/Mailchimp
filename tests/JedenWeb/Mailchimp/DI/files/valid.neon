@@ -1,0 +1,3 @@
+mailchimp:
+	apiKey: 123
+	listId: abc

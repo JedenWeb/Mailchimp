@@ -1,0 +1,21 @@
+{
+  "name": "jedenweb/mailchimp",
+  "description": "Mailchimp integration into Nette Framework",
+  "authors": [
+    {
+      "name": "Pavel Jurásek"
+    }
+  ],
+  "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+  "autoload": {
+    "classmap": ["src/"]
+  },
+  "require": {
+    "nette/nette": "~2.1.10",
+    "kdyby/curl": "~2.1.1"
+  },
+  "require-dev": {
+    "nette/tester": "~1.4.0",
+    "janmarek/mockista": "^1.1"
+  }
+}
