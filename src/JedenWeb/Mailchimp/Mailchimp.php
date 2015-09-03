@@ -108,7 +108,7 @@ class Mailchimp
 
 				if ($response->getCode() !== 404) {
 					Debugger::log($e);
-					return;
+					return NULL;
 				}
 			} else {
 				throw $e;
