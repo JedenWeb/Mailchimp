@@ -11,8 +11,9 @@
     "classmap": ["src/"]
   },
   "require": {
-    "nette/nette": "~2.1.10",
-    "kdyby/curl": "~2.1.1"
+    "nette/di": "^2.2",
+    "tracy/tracy": "^2.2",
+    "kdyby/curl": "^2.2"
   },
   "require-dev": {
     "nette/tester": "~1.4.0",
