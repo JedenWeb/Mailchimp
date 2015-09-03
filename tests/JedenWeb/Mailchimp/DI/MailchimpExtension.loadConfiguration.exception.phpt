@@ -11,11 +11,8 @@ $compiler->addExtension('curl', new CurlExtension);
 $compiler->addExtension('mailchimp', new MailchimpExtension);
 
 $loader = new DI\Config\Loader();
-$config = $loader->load(__DIR__ . '/files/valid.neon');
+$config = $loader->load(__DIR__ . '/files/invalid.neon');
 
-eval($compiler->compile($config, 'Container1', 'Nette\DI\Container'));
-
-/** @var DI\Container $container */
-$container = new Container1;
-
-\Tester\Assert::same('JedenWeb\Mailchimp\Mailchimp', get_class($container->getService('mailchimp.mailchimp')));
+\Tester\Assert::exception(function() use ($compiler, $config) {
+	eval($compiler->compile($config, 'Container1', 'Nette\DI\Container'));
+}, 'JedenWeb\Mailchimp\InvalidStateException', 'Missing configuration option mailchimp.listId.');
