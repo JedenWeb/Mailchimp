@@ -53,13 +53,13 @@ class Mailchimp
 		if ($status === FALSE) {
 			$response = $this->call(Request::POST, "/lists/$this->listId/members", $data);
 
-			return $response->getCode() === 200;
+			return $response && $response->getCode() === 200;
 		} else if ($status !== 'subscribed') {
 			$response = $this->call(Request::PATCH, "/lists/$this->listId/members/".md5($email), [
 				'status' => 'subscribed',
 			]);
 
-			return $response->getCode() === 200;
+			return $response && $response->getCode() === 200;
 		}
 	}
 
