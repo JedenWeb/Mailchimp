@@ -41,21 +41,23 @@ class Mailchimp
 
 	/**
 	 * @param string $email
+	 * @param string|NULL $listId
 	 *
 	 * @return bool|NULL
 	 */
-	public function subscribe($email)
+	public function subscribe($email, $listId = NULL)
 	{
-		$status = $this->getStatus($email);
+		$listId = $listId ?: $this->listId;
+		$status = $this->getStatus($email, $listId);
 
 		$data = ['email_address' => $email, 'status' => 'subscribed'];
 
 		if ($status === FALSE) {
-			$response = $this->call(Request::POST, "/lists/$this->listId/members", $data);
+			$response = $this->call(Request::POST, "/lists/$listId/members", $data);
 
 			return $response && $response->getCode() === 200;
 		} else if ($status !== 'subscribed') {
-			$response = $this->call(Request::PATCH, "/lists/$this->listId/members/".md5($email), [
+			$response = $this->call(Request::PATCH, "/lists/$listId/members/".md5($email), [
 				'status' => 'subscribed',
 			]);
 
@@ -66,12 +68,13 @@ class Mailchimp
 
 	/**
 	 * @param string $email
+	 * @param string $listId
 	 *
 	 * @return string|FALSE
 	 */
-	private function getStatus($email)
+	private function getStatus($email, $listId)
 	{
-		$response = $this->call(Request::GET, "/lists/$this->listId/members/".md5($email));
+		$response = $this->call(Request::GET, "/lists/$listId/members/".md5($email));
 
 		if (!$response || $response->getCode() === 404) {
 			return FALSE;
