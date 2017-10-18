@@ -15,6 +15,9 @@ use Nette\Utils\Json;
 class Mailchimp
 {
 
+	const STATUS_SUBSCRIBED = 'subscribed';
+	const STATUS_UNSUBSCRIBED = 'unsubscribed';
+
 	/** @var string */
 	private $url;
 
@@ -50,15 +53,40 @@ class Mailchimp
 		$listId = $listId ?: $this->listId;
 		$status = $this->getStatus($email, $listId);
 
-		$data = ['email_address' => $email, 'status' => 'subscribed'];
+		$data = ['email_address' => $email, 'status' => self::STATUS_SUBSCRIBED];
 
 		if ($status === FALSE) {
 			$response = $this->call(Request::POST, "/lists/$listId/members", $data);
 
 			return $response && $response->getCode() === 200;
-		} else if ($status !== 'subscribed') {
+		} else if ($status !== self::STATUS_SUBSCRIBED) {
 			$response = $this->call(Request::PATCH, "/lists/$listId/members/".md5($email), [
-				'status' => 'subscribed',
+				'status' => self::STATUS_SUBSCRIBED,
+			]);
+
+			return $response && $response->getCode() === 200;
+		}
+	}
+
+	/**
+	 * @param string $email
+	 * @param string|NULL $listId
+	 *
+	 * @return bool|NULL
+	 */
+	public function unsubscribe($email, $listId = NULL)
+	{
+		$listId = $listId ?: $this->listId;
+		$status = $this->getStatus($email, $listId);
+		$data = ['email_address' => $email, 'status' => self::STATUS_UNSUBSCRIBED];
+
+		if ($status === FALSE) {	// not in Mailchimp at all, add new entry as ubsubscribed
+			$response = $this->call(Request::POST, "/lists/$listId/members", $data);
+
+			return $response && $response->getCode() === 200;
+		} else if ($status !== self::STATUS_UNSUBSCRIBED) {	// only update is user is not in the ubsubscribed status
+			$response = $this->call(Request::PATCH, "/lists/$listId/members/".md5($email), [
+				'status' => self::STATUS_UNSUBSCRIBED,
 			]);
 
 			return $response && $response->getCode() === 200;
